@@ -1,0 +1,29 @@
+﻿version: "3"
+
+services: 
+  db:
+    image: "postgres"
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: resto_user
+      POSTGRES_PASSWORD: resto_password
+      POSTGRES_DB: angry_resto
+  queue:
+    image: "rabbitmq"
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 15692:15692
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 10
+      test:
+        - "CMD"
+        - "rabbitmqctl"
+        - "status"
+  redis:
+    image: "redis"
+    ports:
+      - 6379:6379
