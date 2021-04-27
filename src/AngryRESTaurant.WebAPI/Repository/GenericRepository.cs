@@ -18,6 +18,10 @@ namespace AngryRESTaurant.WebAPI.Repository
         T GetById(Guid id);
         Task<T> GetByIdAsync(Guid id);
 
+
+        IEnumerable<T> GetByIds(IEnumerable<Guid> ids);
+        Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<Guid> ids);
+
         void Upsert(T upsertObject);
         Task UpsertAsync(T upsertObject);
 
@@ -61,6 +65,18 @@ namespace AngryRESTaurant.WebAPI.Repository
         public async Task<T> GetByIdAsync(Guid id)
         {
             return (await DoQueryAsync(x => x.Id == id)).Single();
+        }
+
+        public IEnumerable<T> GetByIds(IEnumerable<Guid> ids)
+        {
+            using var querySession = _store.QuerySession();
+            return querySession.LoadMany<T>(ids);
+        }
+
+        public async Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<Guid> ids)
+        {
+            using var querySession = _store.QuerySession();
+            return await querySession.LoadManyAsync<T>(ids);
         }
 
         public IEnumerable<T> QueryAll()

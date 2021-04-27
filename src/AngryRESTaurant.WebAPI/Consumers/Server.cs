@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AngryRESTaurant.WebAPI.Contracts;
 using AngryRESTaurant.WebAPI.Model;
 using AngryRESTaurant.WebAPI.Repository;
+using AngryRESTaurant.WebAPI.Utils;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +29,8 @@ namespace AngryRESTaurant.WebAPI.Consumers
 
             _logger.LogDebug($"{name} grab the food, bringing the food to customer");
             // Server is running to give the order to..customer
-            await Task.Delay(TimeSpan.FromMinutes(1));
+
+            await Task.Delay(TimeSpan.FromSeconds(RandomNumber.RandomInt()));
 
             await _orderRepository.UpsertAsync(new OrderStatus()
             {

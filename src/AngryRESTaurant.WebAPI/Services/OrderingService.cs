@@ -16,7 +16,6 @@ namespace AngryRESTaurant.WebAPI.Services
         private readonly IRequestClient<OrderCreateRequest> _orderCreateClient;
         private readonly ILogger<OrderingService> _logger;
 
-
         public OrderingService(IRepository<FoodMenu> foodMenuRepo,
                 IRequestClient<OrderCreateRequest> orderCreateClient,
                 ILogger<OrderingService> logger)

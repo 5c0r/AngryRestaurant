@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: resto_password
       POSTGRES_DB: angry_resto
   queue:
-    image: "rabbitmq"
+    image: "rabbitmq:3.8.14-management-alpine"
     ports:
       - 5672:5672
       - 15672:15672

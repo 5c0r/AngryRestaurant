@@ -36,5 +36,12 @@ namespace AngryRESTaurant.WebAPI.Controllers
 
             return Ok(oneOrder);
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete()
+        {
+            // await _orderRepository.DeleteAsync()
+            return Ok();
+        }
     }
 }

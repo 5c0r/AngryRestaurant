@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using AngryRESTaurant.WebAPI.Repository;
 using AngryRESTaurant.WebAPI.Services;
 using Marten;
 using MassTransit;
+using MediatR;
 using Serilog;
 
 namespace AngryRESTaurant.WebAPI
@@ -51,45 +53,45 @@ namespace AngryRESTaurant.WebAPI
             // TODO: Next episode ? MassTransit
             services.AddMassTransit(mt =>
             {
-                if (Hosting.IsDevelopment())
-                {
-                    mt.UsingInMemory((context, cfg) =>
-                    {
-                        cfg.TransportConcurrencyLimit = 1;
-
-                        cfg.ConfigureEndpoints(context);
-                    });
-                }
-
-                // // TODO: What else B-RabbitMQ ??
-                // mt.UsingRabbitMq((ctx, cfg) =>
+                // if (Hosting.IsDevelopment())
                 // {
-                //     cfg.Host("localhost");
+                //     mt.UsingInMemory((context, cfg) =>
+                //     {
+                //         cfg.TransportConcurrencyLimit = 10;
                 //
-                //     MessageDataDefaults.TimeToLive = TimeSpan.FromMinutes(5);
-                //     MessageDataDefaults.Threshold = 2000;
-                //     MessageDataDefaults.AlwaysWriteToRepository = false;
-                //
-                //     // TODO: Marten as repository ? Not yet
-                // });
+                //         cfg.ConfigureEndpoints(context);
+                //     });
+                // }
+
+                // TODO: What else B-RabbitMQ ??
+                mt.UsingRabbitMq((ctx, cfg) =>
+                {
+                    cfg.Host("localhost");
+
+                    MessageDataDefaults.TimeToLive = TimeSpan.FromMinutes(5);
+                    MessageDataDefaults.Threshold = 2000;
+                    MessageDataDefaults.AlwaysWriteToRepository = false;
+                    cfg.ConcurrentMessageLimit = 1;
+
+                    cfg.ConfigureEndpoints(ctx);
+                    // TODO: Marten as repository ? Not yet
+                });
 
                 mt.AddRequestClient<OrderCreateRequest>();
 
                 mt.AddConsumer<Waiter>();
                 mt.AddConsumer<Cook>();
                 mt.AddConsumer<Server>();
-
             });
 
             services.AddMassTransitHostedService();
 
             // Should have done this, why I am so stupid...
             services.AddScoped(typeof(IRepository<>),typeof(GenericRepository<>));
+            services.AddMediatR(typeof(Startup));
 
 
             // Dependency Injection
-            // services.AddScoped<IRepository<FoodMenu>, GenericRepository<FoodMenu>>();
-            // services.AddScoped<IRepository<OrderStatus>, GenericRepository<OrderStatus>>();
             services.AddScoped<OrderingService>();
 
         }

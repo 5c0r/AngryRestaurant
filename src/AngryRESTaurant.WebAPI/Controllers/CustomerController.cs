@@ -18,7 +18,7 @@ namespace AngryRESTaurant.WebAPI.Controllers
         {
             _orderingService = orderingService;
         }
-        
+
         [HttpGet]
         public IActionResult Get()
         {
@@ -36,9 +36,9 @@ namespace AngryRESTaurant.WebAPI.Controllers
         {
             try
             {
-                var response = await _orderingService.CustomerCallsOrderAsync(customerName, foodName);
+                await _orderingService.CustomerCallsOrderAsync(customerName, foodName);
 
-                return Ok(response);
+                return Ok();
             }
             catch (InvalidOperationException e)
             {

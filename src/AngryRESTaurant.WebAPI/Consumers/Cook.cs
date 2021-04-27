@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AngryRESTaurant.WebAPI.Contracts;
 using AngryRESTaurant.WebAPI.Model;
 using AngryRESTaurant.WebAPI.Repository;
+using AngryRESTaurant.WebAPI.Utils;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -36,7 +37,7 @@ namespace AngryRESTaurant.WebAPI.Consumers
                 Status = OrderStatuses.Cooking
             });
 
-            await Task.Delay(TimeSpan.FromMinutes(1));
+            await Task.Delay(TimeSpan.FromSeconds(RandomNumber.RandomInt()));
 
             _logger.Log(LogLevel.Debug, $"{name} is done! He shouted to the Server-queue {context.Message.FoodName}!!");
 
@@ -48,7 +49,6 @@ namespace AngryRESTaurant.WebAPI.Consumers
                 ExpectedReadyTime = DateTimeOffset.Now.AddSeconds(5),
                 Status = OrderStatuses.ReadyToServed
             });
-
 
             // TODO: Not sure if this is correct
             await context.Publish<FoodReady>(new
@@ -90,7 +90,6 @@ namespace AngryRESTaurant.WebAPI.Consumers
                 context.Message.FoodName,
                 DateTimeOffset.UtcNow
             });
-
         }
     }
 }
